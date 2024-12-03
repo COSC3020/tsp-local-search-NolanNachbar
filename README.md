@@ -50,3 +50,59 @@ Test your new function; I've provided some basic testing code in `code.test.js`.
 What is the worst-case asymptotic time complexity of your implementation? What
 is the worst-case asymptotic memory complexity? Add your answer, including your
 reasoning, to this markdown file.
+
+Recall my code,
+```js
+function tsp_ls(distance_matrix) {
+  let n = distance_matrix.length;
+  let minRoute = Array.from({ length: n }, (v, i) => i).sort((a, b) => 0.5 - Math.random());// This is memory complexity of O(n)
+  let minCost = calcCost(minRoute, distance_matrix); // This is time complexity of O(n) and memory complexity of O(1)
+  let improving = true;
+  // In the worst case, this is time complexity of \Theta(n!) because it'll loop through every possible permuation in the order of worst to best 
+  while(improving) { 
+    let routePath = [...minRoute]; // Get a shallow copy of min route O(n) 
+    let r = Math.floor(Math.random() * (n - 1)) + 1; // Random Number in the range 1 to n - 1
+    let l = Math.floor(Math.random() * (n - r - 1)) + (r + 1); // Random number in the range r + 1 to n
+    swap(routePath, r, l);// This is time complexity of \Theta(n)
+    let newCost = calcCost(routePath, distance_matrix); // This is O(n) time complexity
+    if (newCost < minCost) {
+      minCost = newCost;
+      minRoute = routePath;
+      improving = true;
+    }
+    else improving = false; // no improvement
+  }
+  return minCost;
+}
+ function calcCost(route, distance_matrix){ // This is time complexity of \Theta(n)
+    let newCost = 0;
+    for (let i = 0; i < distance_matrix.length - 1; i++) {
+      newCost += distance_matrix[route[i]][route[i + 1]];
+    }
+    return newCost;
+ }
+function swap(arr, r, l) { // This is time complexity of \Theta(n)
+  while (r < l) {
+    let temp = arr[r];
+    arr[r] = arr[l];
+    arr[l] = temp;
+    r++;
+    l--;
+  }
+}
+```
+For the time complexity, note that the while loop terminates when no improvement is found in a single iteration. In the worst case, it may explore all possible permuations of cities,  which is $\Theta(n!)$. Also note that each iteration involves calculating the cost of the route O(n) and performing a swap O(n). 
+
+Now adding those up:
+- Time complexity of $\Theta((n + n! * (n + n))) \in \Theta(n * n!)$
+- Memory complexity of $\Theta(n + n)) \in \Theta(n)$
+
+I wrote this independently but I did have to look up some syntax. I also talked after class about how to decide when to stop swapping.
+
+https://www.w3schools.com/js/js_sets.asp
+
+https://stackoverflow.com/questions/5765398/whats-the-best-way-to-convert-a-number-to-a-string-in-javascript
+
+https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+
+I certify that I have listed all sources used to complete this exercise, including the use of any Large Language Models. All of the work is my own, except where stated otherwise. I am aware that plagiarism carries severe penalties and that if plagiarism is suspected, charges may be filed against me without prior notice.
